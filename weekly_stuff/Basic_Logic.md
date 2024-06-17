@@ -13,8 +13,42 @@
 
 1. Create a GitHub repository named `tracker_business_logic`.
 2. Initialize Git in your project directory and push the initial commit to the repository.
+    ```bash
+    git init
+    git remote add origin https://github.com/your-username/tracker_business_logic.git
+    git add .
+    git commit -m "Initial commit with package server and tests"
+    git push -u origin master
+    ```
 
 ## Write the Test Cases with Stub Functions and Handle Call
+
+### Stub Functions Example
+
+1. Define stub functions in `package_server.erl` to simulate database interactions:
+    ```erlang
+    %% Stub functions for database interactions
+    -module(db_api).
+
+    -export([put_package/2, get_package/1, update_location/3]).
+
+    put_package(PackageId, LocationId) ->
+        %% Simulate a successful database insert
+        ok.
+
+    get_package(PackageId) ->
+        %% Simulate a successful database retrieval
+        {ok, {123.45, 67.89}}.
+
+    update_location(LocationId, Longitude, Latitude) ->
+        %% Simulate a successful database update
+        ok.
+
+    handle_call(_) ->
+        ok.
+    ```
+
+### Test Case Example
 
 1. Define EUnit test cases in `package_server_tests.erl` for the following functions:
     - `transfer_package`
@@ -24,8 +58,10 @@
 
 2. Each test case should follow this structure:
     ```erlang
-    ?_assertEqual(ExpectedOutput, package_server:FunctionName(Input)).
+    ?_assertEqual(ExpectedOutput, package_server:handle_call(Input, From, State)).
     ```
+
+
 
 ## Write Out the Handle Call Function
 
@@ -70,26 +106,21 @@
         {reply, {error, unknown_request}, State}.
     ```
 
-## Write the Stub Functions
+## Write the main Functions
 
-1. Define stub functions in `package_server.erl` to simulate database interactions:
+1. Implement the main functions that will be used to interact with the server:
     ```erlang
-    %% Stub functions for database interactions
-    -module(db_api).
+    transfer_package(LocationId, PackageId) ->
+        gen_server:call(?MODULE, {transfer_package, LocationId, PackageId}).
 
-    -export([put_package/2, get_package/1, update_location/3]).
+    mark_delivered(PackageId) ->
+        gen_server:call(?MODULE, {mark_delivered, PackageId}).
 
-    put_package(PackageId, LocationId) ->
-        %% Simulate a successful database insert
-        ok.
-
-    get_package(PackageId) ->
-        %% Simulate a successful database retrieval
-        {ok, {123.45, 67.89}}.
+    request_location(PackageId) ->
+        gen_server:call(?MODULE, {request_location, PackageId}).
 
     update_location(LocationId, Longitude, Latitude) ->
-        %% Simulate a successful database update
-        ok.
+        gen_server:call(?MODULE, {update_location, LocationId, Longitude, Latitude}).
     ```
 
 2. Use these stub functions in your `handle_call` implementations.
