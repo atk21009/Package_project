@@ -4,4 +4,4 @@
 
 [page](https://www.digitalocean.com/)
 
-[image1](../images/ss_1_erlang.png)
+![image1](../images/ss_1_erlang.png)
