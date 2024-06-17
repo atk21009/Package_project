@@ -10,6 +10,8 @@
 
 - The project needs 2 firewalls to secure the communication between clients and servers, and between servers and the database.
 
+  ![image](../images/ss_5_erlang.png)
+
 ## Pieces
 
 1. **Package Transfer**
