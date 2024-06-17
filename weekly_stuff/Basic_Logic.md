@@ -43,9 +43,6 @@
     update_location(LocationId, Longitude, Latitude) ->
         %% Simulate a successful database update
         ok.
-
-    handle_call(_) ->
-        ok.
     ```
 
 ### Test Case Example
@@ -61,39 +58,53 @@
     ?_assertEqual(ExpectedOutput, package_server:handle_call(Input, From, State)).
     ```
 
+3. Example:
+    ```erlang
+    -module(package_server_tests).
+    -include_lib("eunit/include/eunit.hrl").
 
+    handle_call_test_() ->
+        {setup,
+         fun() -> package_server:start_link() end,
+         fun(_) -> package_server:stop() end,
+         fun(_) ->
+            %% Example for transfer_package
+            ?_assertEqual({reply, ok, some_state}, package_server:handle_call({transfer_package, valid_location, valid_package}, self(), some_state)),
+            ?_assertEqual({reply, fail, some_state}, package_server:handle_call({transfer_package, bad_location, valid_package}, self(), some_state))
+         end}.
+    ```
 
 ## Write Out the Handle Call Function
 
 1. Implement the `handle_call` function in `package_server.erl` to handle different requests:
     ```erlang
     handle_call({transfer_package, LocationId, PackageId}, _From, State) ->
-        case {LocationId, PackageId} of
-            {valid_location, valid_package} ->
+        case db_api:put_package(PackageId, LocationId) of
+            ok ->
                 {reply, ok, State};
             _ ->
                 {reply, fail, State}
         end;
 
     handle_call({mark_delivered, PackageId}, _From, State) ->
-        case PackageId of
-            valid_package ->
+        case db_api:get_package(PackageId) of
+            {ok, _} ->
                 {reply, ok, State};
             _ ->
                 {reply, fail, State}
         end;
 
     handle_call({request_location, PackageId}, _From, State) ->
-        case PackageId of
-            valid_package ->
-                {reply, {ok, {123.45, 67.89}}, State};
+        case db_api:get_package(PackageId) of
+            {ok, Location} ->
+                {reply, {ok, Location}, State};
             _ ->
                 {reply, fail, State}
         end;
 
     handle_call({update_location, LocationId, Longitude, Latitude}, _From, State) ->
-        case {LocationId, Longitude, Latitude} of
-            {valid_location, 123.45, 67.89} ->
+        case db_api:update_location(LocationId, Longitude, Latitude) of
+            ok ->
                 {reply, ok, State};
             _ ->
                 {reply, fail, State}
@@ -106,7 +117,7 @@
         {reply, {error, unknown_request}, State}.
     ```
 
-## Write the main Functions
+## Write the Main Functions
 
 1. Implement the main functions that will be used to interact with the server:
     ```erlang
