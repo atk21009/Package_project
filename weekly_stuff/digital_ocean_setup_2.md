@@ -4,6 +4,16 @@
 
 1. Assign a unique, appropriately named sub-domain to each of your Digital Ocean droplets.
 
+**Example**:
+
+![image1](../images/ss_do_1.png)
+
+![image2](../images/ss_do_2.png)
+
+![image3](../images/ss_do_3.png)
+
+![image4](../images/ss_do_4.png)
+
 ## Design Firewalls
 
 1. Use the `Front_Firewall.png` and `Back_Firewall.png` in the team file to design the firewalls in Digital Ocean in the networking tab.
